@@ -5,12 +5,14 @@ inThisBuild {
   val scala3   = "3.3.8"
 
   Seq(
-    scalaVersion              := scala213,
-    crossScalaVersions        := Seq(scala213, scala3),
-    Test / fork               := true,
-    Test / parallelExecution  := true,
-    Test / testForkedParallel := true,
-    versionScheme             := Some("early-semver"),
+    scalaVersion                     := scala213,
+    crossScalaVersions               := Seq(scala213, scala3),
+    Test / fork                      := true,
+    Test / parallelExecution         := true,
+    Test / testForkedParallel        := true,
+    versionScheme                    := Some("early-semver"),
+    githubWorkflowJavaVersions       := List(JavaSpec.temurin("21"), JavaSpec.temurin("25")),
+    githubWorkflowPublishJavaVersion := JavaSpec.temurin("21"),
     githubWorkflowTargetTags ++= Seq("v*"),
     githubWorkflowPublishTargetBranches := Seq(
       RefPredicate.StartsWith(Ref.Tag("v")),
