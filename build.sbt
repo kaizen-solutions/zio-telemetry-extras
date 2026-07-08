@@ -30,6 +30,14 @@ inThisBuild {
         )
       )
     ),
+    developers := List(
+      Developer(
+        "calvinlfer",
+        "Calvin Fernandes",
+        "cal@kaizen-solutions.io",
+        url("https://www.kaizen-solutions.io")
+      )
+    ),
     licenses         := List("MIT" -> url("https://opensource.org/licenses/MIT")),
     organization     := "io.kaizen-solutions",
     organizationName := "kaizen-solutions",
