@@ -74,7 +74,6 @@ object ServerSpec extends ZIOSpecDefault {
             assert(completedSpans)(hasSize(equalTo(1))) && {
               val span       = completedSpans.head
               val attributes = span.getAttributes()
-              println(span)
 
               assertTrue(span.getName() == "http.request") &&
               assertTrue(attributes.get(stringKey("http.request.url")) == "/boom") &&
