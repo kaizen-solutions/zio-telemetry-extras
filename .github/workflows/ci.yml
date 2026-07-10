@@ -58,7 +58,7 @@ jobs:
         run: sbt '++ ${{ matrix.scala }}; test'
 
       - name: Compress target directories
-        run: tar cf targets.tar target http4s/target project/target
+        run: tar cf targets.tar target http4s/target smithy4s-series-18/target smithy4s-series-19/target project/target
 
       - name: Upload target directories
         uses: actions/upload-artifact@v7
