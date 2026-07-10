@@ -1,7 +1,7 @@
 package io.kaizensolutions.opentelemetry.http4s.client
 
 import cats.effect.Resource
-import io.kaizensolutions.opentelemetry.opentelemetry.tracerLayer
+import io.kaizensolutions.opentelemetry.tracerLayer
 import io.opentelemetry.api.common.AttributeKey.*
 import io.opentelemetry.api.trace.{SpanKind, StatusCode}
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter

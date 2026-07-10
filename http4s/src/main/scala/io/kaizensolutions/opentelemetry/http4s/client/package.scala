@@ -13,14 +13,7 @@ import zio.telemetry.opentelemetry.tracing.Tracing
 package object client {
   def middleware[R](trace: Tracing, config: TracingConfig = TracingConfig.default)(
       client: Client[RIO[R, *]]
-  ): Client[RIO[R, *]] = middlewareWithContext(trace, config)(client) { req =>
-    Attributes
-      .builder()
-      .put("client.http.url", req.uri.renderString)
-      .put("client.http.method", req.method.toString())
-      .put("client.http.version", req.httpVersion.renderString)
-      .build()
-  }
+  ): Client[RIO[R, *]] = middlewareWithContext(trace, config)(client)(requestAttributes)
 
   def middlewareWithContext[R](trace: Tracing, config: TracingConfig)(
       client: Client[RIO[R, *]]
@@ -32,6 +25,14 @@ package object client {
         )
       }
     }
+
+  def requestAttributes[F[_]](req: Request[F]): Attributes =
+    Attributes
+      .builder()
+      .put("client.http.url", req.uri.renderString)
+      .put("client.http.method", req.method.toString())
+      .put("client.http.version", req.httpVersion.renderString)
+      .build()
 
   def base[R](trace: Tracing, config: TracingConfig)(
       client: Client[RIO[R, *]]

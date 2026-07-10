@@ -1,4 +1,4 @@
-package io.kaizensolutions.opentelemetry
+package io.kaizensolutions
 
 import io.opentelemetry.api.trace.Tracer as OtelTracer
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
