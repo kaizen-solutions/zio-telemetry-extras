@@ -1,6 +1,6 @@
 package io.kaizensolutions.opentelemetry.http4s.server
 
-import io.kaizensolutions.opentelemetry.opentelemetry.tracerLayer
+import io.kaizensolutions.opentelemetry.tracerLayer
 import io.opentelemetry.api.common.AttributeKey.*
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import org.http4s.*

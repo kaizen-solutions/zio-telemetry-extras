@@ -7,6 +7,8 @@ inThisBuild {
   Seq(
     scalaVersion                     := scala213,
     crossScalaVersions               := Seq(scala213, scala3),
+    semanticdbEnabled                := true,
+    semanticdbVersion                := scalafixSemanticdb.revision,
     Test / fork                      := true,
     Test / parallelExecution         := true,
     Test / testForkedParallel        := true,
@@ -77,7 +79,32 @@ lazy val http4s = project
     libraryDependencies ++= Dependencies.http4s ++ Dependencies.zio ++ Dependencies.openTelemetry
   )
 
+lazy val `smithy4s-series-18` =
+  project
+    .in(file("smithy4s-series-18"))
+    .dependsOn(http4s % "compile->compile;test->test")
+    .settings(kindProjectorSettings *)
+    .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
+    .settings(
+      name := "zio-telemetry-extras-smithy4s-series-18",
+      libraryDependencies ++= Dependencies.smithy4s.`0.18.x`
+    )
+
+lazy val `smithy4s-series-19` =
+  project
+    .in(file("smithy4s-series-19"))
+    .dependsOn(http4s % "compile->compile;test->test")
+    .settings(kindProjectorSettings *)
+    .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
+    .settings(
+      name := "zio-telemetry-extras-smithy4s-series-19",
+      libraryDependencies ++= Dependencies.smithy4s.`0.19.x`
+    )
+
 lazy val root = project
   .in(file("."))
   .settings(publish / skip := true)
-  .aggregate(http4s)
+  .aggregate(http4s, `smithy4s-series-18`, `smithy4s-series-19`)
+
+addCommandAlias("lint", "; scalafmtAll; scalafixAll")
+addCommandAlias("lintEnforce", "; scalafmtCheckAll; scalafixAll --check")
