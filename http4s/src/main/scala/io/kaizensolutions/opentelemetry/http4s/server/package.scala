@@ -25,15 +25,22 @@ package object server {
       trace: Tracing,
       config: TracingConfig = TracingConfig.default
   )(http: HttpApp[ZIO[R, E, *]]): HttpApp[ZIO[R, E, *]] =
-    Kleisli { request =>
-      val carrier = incomingHeadersCarrier(request.headers)
+    middlewareWithContext[R, E](trace, config)(requestAttributes[ZIO[R, E, *]])(http)
 
-      val requestAttributes = Attributes
-        .builder()
-        .put("http.request.method", request.method.name)
-        .put("http.request.url", request.uri.renderString)
-        .put("http.request.version", request.httpVersion.renderString)
-        .build()
+  def requestAttributes[F[_]](request: Request[F]): Attributes =
+    Attributes
+      .builder()
+      .put("http.request.method", request.method.name)
+      .put("http.request.url", request.uri.renderString)
+      .put("http.request.version", request.httpVersion.renderString)
+      .build()
+
+  def middlewareWithContext[R, E](trace: Tracing, config: TracingConfig)(
+      context: Request[ZIO[R, E, *]] => Attributes
+  )(http: HttpApp[ZIO[R, E, *]]): HttpApp[ZIO[R, E, *]] =
+    Kleisli { request =>
+      val carrier    = incomingHeadersCarrier(request.headers)
+      val attributes = context(request)
 
       trace
         .extractSpan(
@@ -41,7 +48,7 @@ package object server {
           carrier = carrier,
           spanName = "http.request",
           spanKind = SpanKind.SERVER,
-          attributes = requestAttributes
+          attributes = attributes
         ) {
           val outgoingCarrier = OutgoingContextCarrier.default()
           val response        =
