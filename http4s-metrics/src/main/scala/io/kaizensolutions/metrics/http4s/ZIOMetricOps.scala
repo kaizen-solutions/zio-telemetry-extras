@@ -98,12 +98,8 @@ object ZIOMetricOps {
         classifier.map(ClassifierLabel -> _).toSeq :+
           (MethodLabel -> method.name)
 
-      val requestTags = baseTags ++ Seq(
-        MethodLabel -> method.name,
-        StatusLabel -> status.code.toString()
-      )
+      val requestTags  = baseTags :+ (StatusLabel -> status.code.toString())
       val durationTags = baseTags ++ Seq(
-        MethodLabel       -> method.name,
         StatusBucketLabel -> statusBucket(status),
         PhaseLabel        -> "body"
       )
