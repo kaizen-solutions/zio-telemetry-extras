@@ -81,6 +81,86 @@ object ZIOMetricsUsageSpec extends ZIOSpecDefault {
           total.max == expectedLatency,
           total.sum == expectedLatency
         )
+      },
+      test("records metrics when a route fails before producing a response") {
+        val config = ZIOMetricOpsConfig.default
+          .addLabels(
+            Set(
+              MetricLabel("kind", "server"),
+              MetricLabel("scenario", "abnormal")
+            )
+          )
+        val metricOps: MetricsOps[Task] =
+          ZIOMetricOps.make(config)
+        val trackedRoutes = ServerMetrics[Task](metricOps)(routes).orNotFound
+
+        val activeRequests =
+          Metric.gauge("active_requests").tagged(config.metricLabels)
+        val requestCount = Metric
+          .counter("request_count")
+          .tagged(
+            config.metricLabels ++ Set(
+              MetricLabel("method", "POST"),
+              MetricLabel("status", Status.InternalServerError.code.toString)
+            )
+          )
+        val headersLatency = Metric
+          .histogram("response_latency", config.histogramBoundaries)
+          .tagged(
+            config.metricLabels ++ Set(
+              MetricLabel("method", "POST"),
+              MetricLabel("phase", "headers")
+            )
+          )
+        val bodyLatency = Metric
+          .histogram("response_latency", config.histogramBoundaries)
+          .tagged(
+            config.metricLabels ++ Set(
+              MetricLabel("method", "POST"),
+              MetricLabel("status_bucket", "5xx"),
+              MetricLabel("phase", "body")
+            )
+          )
+        val abnormalLabels = config.metricLabels ++ Set(
+          MetricLabel("termination_type", "error"),
+          MetricLabel("cause", classOf[RuntimeException].getName)
+        )
+        val abnormalCount =
+          Metric.counter("abnormal_count").tagged(abnormalLabels)
+        val abnormalLatency =
+          Metric
+            .histogram("abnormal_latency", config.histogramBoundaries)
+            .tagged(abnormalLabels)
+
+        for {
+          result <- trackedRoutes
+            .run(Request(method = Method.POST, uri = uri"/fail"))
+            .either
+          active   <- activeRequests.value
+          requests <- requestCount.value
+          headers  <- headersLatency.value
+          total    <- bodyLatency.value
+          abnormal <- abnormalCount.value
+          duration <- abnormalLatency.value
+        } yield assertTrue(
+          result.is(_.left).isInstanceOf[RuntimeException],
+          result.is(_.left).getMessage() == "Boom!",
+          active.value == 0.0,
+          requests.count == 1.0,
+          abnormal.count == 1.0,
+          headers.count == 1L,
+          headers.min == 0.0,
+          headers.max == 0.0,
+          headers.sum == 0.0,
+          total.count == 1L,
+          total.min == 0.0,
+          total.max == 0.0,
+          total.sum == 0.0,
+          duration.count == 1L,
+          duration.min == 0.0,
+          duration.max == 0.0,
+          duration.sum == 0.0
+        )
       }
     )
 
