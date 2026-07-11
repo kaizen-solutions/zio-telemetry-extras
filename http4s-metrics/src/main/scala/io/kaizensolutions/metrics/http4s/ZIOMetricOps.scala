@@ -14,7 +14,7 @@ final case class ZIOMetricOpsConfig(
 ) {
   def withMetricPrefix(s: String)         = copy(metricPrefix = Option(s))
   def addLabels(labels: Set[MetricLabel]) = copy(metricLabels = this.metricLabels ++ labels)
-  def histogramBoundaries(boundary: Histogram.Boundaries) = copy(histogramBoundaries = boundary)
+  def withHistogramBoundaries(boundary: Histogram.Boundaries) = copy(histogramBoundaries = boundary)
 }
 object ZIOMetricOpsConfig {
   val default = ZIOMetricOpsConfig(
