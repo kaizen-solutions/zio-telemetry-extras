@@ -70,13 +70,24 @@ lazy val kindProjectorSettings = Seq(
   }
 )
 
+lazy val `http4s-metrics` = project
+  .in(file("http4s-metrics"))
+  .settings(kindProjectorSettings *)
+  .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
+  .settings(
+    name := "zio-telemetry-extras-http4s-metrics",
+    libraryDependencies ++= Dependencies.http4s.core ++
+      Dependencies.http4s.all.map(_ % Test) ++
+      Dependencies.zio
+  )
+
 lazy val http4s = project
   .in(file("http4s"))
   .settings(kindProjectorSettings *)
   .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
   .settings(
     name := "zio-telemetry-extras-http4s",
-    libraryDependencies ++= Dependencies.http4s ++ Dependencies.zio ++ Dependencies.openTelemetry
+    libraryDependencies ++= Dependencies.http4s.all ++ Dependencies.zio ++ Dependencies.openTelemetry
   )
 
 lazy val `smithy4s-series-18` =
@@ -104,7 +115,7 @@ lazy val `smithy4s-series-19` =
 lazy val root = project
   .in(file("."))
   .settings(publish / skip := true)
-  .aggregate(http4s, `smithy4s-series-18`, `smithy4s-series-19`)
+  .aggregate(http4s, `http4s-metrics`, `smithy4s-series-18`, `smithy4s-series-19`)
 
 addCommandAlias("lint", "; scalafmtAll; scalafixAll")
 addCommandAlias("lintEnforce", "; scalafmtCheckAll; scalafixAll --check")

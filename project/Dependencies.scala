@@ -18,11 +18,15 @@ object Dependencies {
     val zioTelemetry  = "3.1.18"
   }
 
-  val http4s = Seq(
-    org.http4s %% "http4s-server" % version.http4s,
-    org.http4s %% "http4s-client" % version.http4s,
-    org.http4s %% "http4s-dsl"    % version.http4s
-  )
+  object http4s {
+    val core = Seq(org.http4s %% "http4s-core" % version.http4s)
+
+    val all = Seq(
+      org.http4s %% "http4s-server" % version.http4s,
+      org.http4s %% "http4s-client" % version.http4s,
+      org.http4s %% "http4s-dsl"    % version.http4s
+    )
+  }
 
   val zio = Seq(
     org.zio %% "zio"               % version.zio,
