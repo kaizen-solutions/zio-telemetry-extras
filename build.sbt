@@ -76,7 +76,9 @@ lazy val `http4s-metrics` = project
   .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
   .settings(
     name := "zio-telemetry-extras-http4s-metrics",
-    libraryDependencies ++= Dependencies.http4s.core ++ Dependencies.zio
+    libraryDependencies ++= Dependencies.http4s.core ++
+      Dependencies.http4s.all.map(_ % Test) ++
+      Dependencies.zio
   )
 
 lazy val http4s = project

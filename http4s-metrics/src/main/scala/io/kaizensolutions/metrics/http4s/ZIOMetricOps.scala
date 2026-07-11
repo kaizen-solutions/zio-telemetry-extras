@@ -11,13 +11,17 @@ final case class ZIOMetricOpsConfig(
     metricPrefix: Option[String],
     metricLabels: Set[MetricLabel],
     histogramBoundaries: Histogram.Boundaries
-)
+) {
+  def withMetricPrefix(s: String)         = copy(metricPrefix = Option(s))
+  def addLabels(labels: Set[MetricLabel]) = copy(metricLabels = this.metricLabels ++ labels)
+  def histogramBoundaries(boundary: Histogram.Boundaries) = copy(histogramBoundaries = boundary)
+}
 object ZIOMetricOpsConfig {
   val default = ZIOMetricOpsConfig(
     metricPrefix = None,
     metricLabels = Set.empty[MetricLabel],
     histogramBoundaries = Histogram.Boundaries.fromChunk(
-      Chunk(0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10)
+      Chunk(0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10, 30, 60)
     )
   )
 }
