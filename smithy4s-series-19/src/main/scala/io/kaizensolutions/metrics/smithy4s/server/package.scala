@@ -15,6 +15,11 @@ package object server {
   /** Standalone metrics server endpoint middleware that tags all metrics reported with additional
     * smithy4s information
     *
+    * NOTE: Make sure you use `.encodeErrorsBeforeMiddleware(true)` in conjunction with
+    * `.middleware(metrics.smithy4s.server.middleware(...))` so the correct status codes will be
+    * reported. However, if you choose not to do this, you get access to the cause. label which will
+    * report exception names
+    *
     * @param config
     * @param requestClassifier
     * @return
