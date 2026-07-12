@@ -14,6 +14,8 @@ The http4s-metrics module provides the `MetricOps` abstraction built on ZIO metr
 
 The smithy4s module provides client endpoint middleware and server endpoint middleware for `smithy4s` applications using `ZIO`.
 
-- Server endpoint middleware works together with http4s server middleware to enrich the existing span with Smithy attributes
-- Standalone Server endpoint middleware
-- Client endpoint middleware is standalone middleware
+- Server endpoint middleware (dependent on http4s tracing) for tracing to enrich an existing span with smithy4s attributes
+- Server endpoint middleware (standalone) for tracing
+- Client endpoint middleware (standalone) for tracing
+- Server endpoint middleware for metrics
+- Client endpoint middleware for metrics

@@ -93,7 +93,7 @@ lazy val http4s = project
 lazy val `smithy4s-series-18` =
   project
     .in(file("smithy4s-series-18"))
-    .dependsOn(http4s % "compile->compile;test->test")
+    .dependsOn(List(http4s, `http4s-metrics`).map(_ % "compile->compile;test->test") *)
     .settings(kindProjectorSettings *)
     .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
     .settings(
@@ -104,7 +104,7 @@ lazy val `smithy4s-series-18` =
 lazy val `smithy4s-series-19` =
   project
     .in(file("smithy4s-series-19"))
-    .dependsOn(http4s % "compile->compile;test->test")
+    .dependsOn(List(http4s, `http4s-metrics`).map(_ % "compile->compile;test->test") *)
     .settings(kindProjectorSettings *)
     .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
     .settings(
