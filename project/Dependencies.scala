@@ -10,9 +10,9 @@ object Dependencies {
 
   private object version {
     val http4s        = "0.23.36"
-    val openTelemetry = "1.63.0"
+    val openTelemetry = "1.64.0"
     val smithy4s18    = "0.18.55"
-    val smithy4s19    = "0.19.8"
+    val smithy4s19    = "0.19.11"
     val zio           = "2.1.26"
     val zioInterop    = "23.1.0.13"
     val zioTelemetry  = "3.1.18"
@@ -43,5 +43,9 @@ object Dependencies {
 
   val openTelemetry = Seq(
     org.openTelemetry % "opentelemetry-sdk-testing" % version.openTelemetry % Test
+  )
+
+  val openTelemetryExtensions = Seq(
+    org.openTelemetry % "opentelemetry-extension-trace-propagators" % version.openTelemetry
   )
 }

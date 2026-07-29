@@ -5,8 +5,8 @@ import fs2.{text, Stream}
 import io.kaizensolutions.metrics.http4s.ZIOMetricOpsConfig
 import org.http4s.{Request, Response, Status}
 import org.http4s.client.Client
-import smithy4s.UnsupportedProtocolError
 import smithy4s.http4s.SimpleRestJsonBuilder
+import smithy4s.UnsupportedProtocolError
 import weather.{CityId, WeatherService}
 import zio.*
 import zio.interop.catz.*
@@ -24,7 +24,7 @@ object ClientMiddlewareSpec extends ZIOSpecDefault {
     test("records successful requests with Smithy labels") {
       val prefix     = "smithy4s_18_client_success"
       val classifier = "weather"
-      val config = ZIOMetricOpsConfig.default
+      val config     = ZIOMetricOpsConfig.default
         .withMetricPrefix(prefix)
         .addLabels(Set(MetricLabel("test", "success")))
       val baseLabels = endpointLabels(
@@ -32,7 +32,7 @@ object ClientMiddlewareSpec extends ZIOSpecDefault {
         operation = "GetWeather",
         resource = "GET /cities/{cityId}/weather"
       )
-      val classifiedLabels = baseLabels + MetricLabel("classifier", classifier)
+      val classifiedLabels               = baseLabels + MetricLabel("classifier", classifier)
       val response: Task[Response[Task]] = ZIO.succeed(
         Response(
           status = Status.Ok,
@@ -43,9 +43,9 @@ object ClientMiddlewareSpec extends ZIOSpecDefault {
       )
 
       for {
-        weather <- setupSmithy(setupClient(response), config, _ => Some(classifier))
-        output  <- weather.getWeather(CityId("London"), "UK")
-        active  <- gauge(s"${prefix}_active_requests", classifiedLabels)
+        weather  <- setupSmithy(setupClient(response), config, _ => Some(classifier))
+        output   <- weather.getWeather(CityId("London"), "UK")
+        active   <- gauge(s"${prefix}_active_requests", classifiedLabels)
         requests <- counter(
           s"${prefix}_request_count",
           classifiedLabels ++ Set(
@@ -82,7 +82,7 @@ object ClientMiddlewareSpec extends ZIOSpecDefault {
       val prefix     = "smithy4s_18_client_failure"
       val classifier = "cities"
       val failure    = new RuntimeException("Boom!")
-      val config = ZIOMetricOpsConfig.default
+      val config     = ZIOMetricOpsConfig.default
         .withMetricPrefix(prefix)
         .addLabels(Set(MetricLabel("test", "failure")))
       val baseLabels = endpointLabels(
@@ -90,7 +90,7 @@ object ClientMiddlewareSpec extends ZIOSpecDefault {
         operation = "CreateCity",
         resource = "POST /cities"
       )
-      val classifiedLabels = baseLabels + MetricLabel("classifier", classifier)
+      val classifiedLabels  = baseLabels + MetricLabel("classifier", classifier)
       val terminationLabels = classifiedLabels ++ Set(
         MetricLabel("termination_type", "error"),
         MetricLabel("cause", classOf[RuntimeException].getName)

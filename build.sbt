@@ -90,6 +90,14 @@ lazy val http4s = project
     libraryDependencies ++= Dependencies.http4s.all ++ Dependencies.zio ++ Dependencies.openTelemetry
   )
 
+lazy val propagators = project
+  .in(file("propagators"))
+  .settings(kindProjectorSettings *)
+  .settings(
+    name := "zio-telemetry-extras-propagators",
+    libraryDependencies ++= Dependencies.zio ++ Dependencies.openTelemetryExtensions
+  )
+
 lazy val `smithy4s-series-18` =
   project
     .in(file("smithy4s-series-18"))
@@ -115,7 +123,7 @@ lazy val `smithy4s-series-19` =
 lazy val root = project
   .in(file("."))
   .settings(publish / skip := true)
-  .aggregate(http4s, `http4s-metrics`, `smithy4s-series-18`, `smithy4s-series-19`)
+  .aggregate(http4s, `http4s-metrics`, propagators, `smithy4s-series-18`, `smithy4s-series-19`)
 
 addCommandAlias("lint", "; scalafmtAll; scalafixAll")
 addCommandAlias("lintEnforce", "; scalafmtCheckAll; scalafixAll --check")

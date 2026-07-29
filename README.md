@@ -10,6 +10,10 @@ The http4s module provides client and server middleware for `http4s` application
 
 The http4s-metrics module provides the `MetricOps` abstraction built on ZIO metrics needed by (client and server) http4s Metrics middleware
 
+## propagators
+
+`zio-telemetry` only ships a W3C Trace Context propagator (`TraceContextPropagator.default`). The propagators module provides ready-made `TraceContextPropagator` instances for the other common wire formats, along with combinators for composing them.
+
 ## smithy4s (0.18.x and 0.19.x)
 
 The smithy4s module provides client endpoint middleware and server endpoint middleware for `smithy4s` applications using `ZIO`.
