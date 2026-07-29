@@ -112,6 +112,15 @@ lazy val `smithy4s-series-19` =
       libraryDependencies ++= Dependencies.smithy4s.`0.19.x`
     )
 
+lazy val `natchez-bridge` =
+  project
+    .in(file("natchez-bridge"))
+    .settings(kindProjectorSettings *)
+    .settings(
+      name := "zio-telemetry-natchez",
+      libraryDependencies ++= Dependencies.natchez ++ Dependencies.zio
+    )
+
 lazy val root = project
   .in(file("."))
   .settings(publish / skip := true)
