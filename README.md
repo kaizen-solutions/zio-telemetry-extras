@@ -23,3 +23,7 @@ The smithy4s module provides client endpoint middleware and server endpoint midd
 - Client endpoint middleware (standalone) for tracing
 - Server endpoint middleware for metrics
 - Client endpoint middleware for metrics
+
+## natchez-bridge
+
+The natchez-bridge module provides an implementation of `natchez.Trace[RIO[R, *]]` using `zio.telemetry.opentelemetry.tracing.Tracing` allowing for seamless interop between the two.
