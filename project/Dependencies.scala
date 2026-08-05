@@ -3,6 +3,7 @@ import sbt.*
 object Dependencies {
   private object org {
     val http4s        = "org.http4s"
+    val natchez       = "org.tpolecat"
     val openTelemetry = "io.opentelemetry"
     val smithy4s      = "com.disneystreaming.smithy4s"
     val zio           = "dev.zio"
@@ -10,6 +11,7 @@ object Dependencies {
 
   private object version {
     val http4s        = "0.23.36"
+    val natchez       = "0.3.10"
     val openTelemetry = "1.64.0"
     val smithy4s18    = "0.18.55"
     val smithy4s19    = "0.19.11"
@@ -35,6 +37,8 @@ object Dependencies {
     org.zio %% "zio-test"          % version.zio % Test,
     org.zio %% "zio-test-sbt"      % version.zio % Test
   )
+
+  val natchez = Seq(org.natchez %% "natchez-core" % version.natchez)
 
   object smithy4s {
     val `0.18.x` = Seq(org.smithy4s %% "smithy4s-http4s" % version.smithy4s18)

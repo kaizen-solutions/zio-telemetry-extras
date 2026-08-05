@@ -120,10 +120,26 @@ lazy val `smithy4s-series-19` =
       libraryDependencies ++= Dependencies.smithy4s.`0.19.x`
     )
 
+lazy val `natchez-bridge` =
+  project
+    .in(file("natchez-bridge"))
+    .settings(kindProjectorSettings *)
+    .settings(
+      name := "zio-telemetry-extras-natchez",
+      libraryDependencies ++= Dependencies.zio ++ Dependencies.natchez ++ Dependencies.openTelemetry
+    )
+
 lazy val root = project
   .in(file("."))
   .settings(publish / skip := true)
-  .aggregate(http4s, `http4s-metrics`, propagators, `smithy4s-series-18`, `smithy4s-series-19`)
+  .aggregate(
+    http4s,
+    `http4s-metrics`,
+    `natchez-bridge`,
+    propagators,
+    `smithy4s-series-18`,
+    `smithy4s-series-19`
+  )
 
 addCommandAlias("lint", "; scalafmtAll; scalafixAll")
 addCommandAlias("lintEnforce", "; scalafmtCheckAll; scalafixAll --check")
