@@ -38,10 +38,7 @@ object Dependencies {
     org.zio %% "zio-test-sbt"      % version.zio % Test
   )
 
-  val natchez = Seq(
-    org.natchez %% "natchez-core"          % version.natchez,
-    org.natchez %% "natchez-opentelemetry" % version.natchez
-  )
+  val natchez = Seq(org.natchez %% "natchez-core" % version.natchez)
 
   object smithy4s {
     val `0.18.x` = Seq(org.smithy4s %% "smithy4s-http4s" % version.smithy4s18)
