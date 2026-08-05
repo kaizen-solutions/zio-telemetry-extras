@@ -7,7 +7,7 @@ import io.opentelemetry.sdk.trace.`export`.SimpleSpanProcessor
 import io.opentelemetry.sdk.trace.data.SpanData
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import zio.*
-import zio.telemetry.opentelemetry.context.{ContextStorage, OutgoingContextCarrier}
+import zio.telemetry.opentelemetry.context.OutgoingContextCarrier
 import zio.telemetry.opentelemetry.tracing.propagation.TraceContextPropagator
 import zio.telemetry.opentelemetry.tracing.Tracing
 import zio.telemetry.opentelemetry.OpenTelemetry as ZioTelemetry
@@ -15,7 +15,7 @@ import zio.test.*
 
 import scala.jdk.CollectionConverters.*
 
-import _root_.natchez.Trace as NatchezTracing
+import _root_.natchez.{Kernel as NatchezKernel, Span as NatchezSpan, Trace as NatchezTracing}
 
 /** Exercises the interplay between the `natchez.Trace` produced by [[NatchezTrace]] and the
   * `zio.telemetry.opentelemetry.tracing.Tracing` of zio-telemetry when both are backed by the same
@@ -32,13 +32,6 @@ object NatchezTraceSpec extends ZIOSpecDefault {
 
   override def spec: Spec[TestEnvironment & Scope, Any] =
     suite("NatchezTrace interop with zio-telemetry Tracing")(
-      interop("JVM thread-local context storage")
-    )
-
-  private def interop(
-      storageName: String
-  ): Spec[Any, Throwable] =
-    suite(storageName)(
       test("a natchez span nests underneath a zio-telemetry span") {
         for {
           tracing <- ZIO.service[Tracing]
@@ -154,6 +147,30 @@ object NatchezTraceSpec extends ZIOSpecDefault {
           natchezHeaders == zioHeaders,
           natchezHeaders.get("traceparent").exists(_.contains(caller.getSpanId))
         )
+      },
+      test("a kernel passed as a link is recorded as a link on the new span") {
+        for {
+          natchez <- ZIO.service[NatchezTracing[Task]]
+          kernel  <- natchez.span("linked-to")(natchez.kernel)
+          _       <- natchez.span("linker", NatchezSpan.Options.Defaults.withLink(kernel))(ZIO.unit)
+          spans   <- finishedSpans
+          byName = spans.map(span => span.getName -> span).toMap
+          links  = byName("linker").getLinks.asScala.toList
+        } yield assertTrue(
+          links.map(_.getSpanContext.getSpanId) == List(byName("linked-to").getSpanId)
+        )
+      },
+      test("a kernel carrying no trace context contributes no link") {
+        for {
+          natchez <- ZIO.service[NatchezTracing[Task]]
+          _       <- natchez.span("outer") {
+            natchez.span("inner", NatchezSpan.Options.Defaults.withLink(NatchezKernel(Map.empty)))(
+              ZIO.unit
+            )
+          }
+          spans <- finishedSpans
+          inner = spans.find(_.getName == "inner").get
+        } yield assertTrue(inner.getLinks.isEmpty)
       }
     ).provide(tracerLayer)
 
@@ -183,8 +200,6 @@ object NatchezTraceSpec extends ZIOSpecDefault {
       ZLayer.fromZIOEnvironment(inMemoryTracer),
       Tracing.live(logAnnotated = true),
       ZioTelemetry.contextZIO,
-      ZLayer.fromFunction((tracing: Tracing, contextStorage: ContextStorage) =>
-        NatchezTrace.make[Any](tracing, contextStorage)
-      )
+      ZLayer.fromFunction((tracing: Tracing) => NatchezTrace.make[Any](tracing))
     )
 }
