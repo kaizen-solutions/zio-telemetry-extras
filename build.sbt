@@ -70,6 +70,13 @@ lazy val kindProjectorSettings = Seq(
   }
 )
 
+lazy val silenceSmithyE230 = Seq(
+  scalacOptions ++= {
+    if (isScala3.value) Seq("-Wconf:id=E230:s")
+    else Seq.empty
+  }
+)
+
 lazy val `http4s-metrics` = project
   .in(file("http4s-metrics"))
   .settings(kindProjectorSettings *)
@@ -103,6 +110,7 @@ lazy val `smithy4s-series-18` =
     .in(file("smithy4s-series-18"))
     .dependsOn(List(http4s, `http4s-metrics`).map(_ % "compile->compile;test->test") *)
     .settings(kindProjectorSettings *)
+    .settings(silenceSmithyE230 *)
     .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
     .settings(
       name := "zio-telemetry-extras-smithy4s-series-18",
@@ -114,6 +122,7 @@ lazy val `smithy4s-series-19` =
     .in(file("smithy4s-series-19"))
     .dependsOn(List(http4s, `http4s-metrics`).map(_ % "compile->compile;test->test") *)
     .settings(kindProjectorSettings *)
+    .settings(silenceSmithyE230 *)
     .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
     .settings(
       name := "zio-telemetry-extras-smithy4s-series-19",
