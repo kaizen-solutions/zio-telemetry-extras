@@ -2,7 +2,7 @@ import org.typelevel.scalacoptions.ScalacOptions
 
 inThisBuild {
   val scala213 = "2.13.18"
-  val scala3   = "3.3.8"
+  val scala3   = "3.9.0"
 
   Seq(
     scalaVersion                     := scala213,
@@ -120,6 +120,16 @@ lazy val `smithy4s-series-19` =
       libraryDependencies ++= Dependencies.smithy4s.`0.19.x`
     )
 
+lazy val `sttp4-metrics` =
+  project
+    .in(file("sttp4-metrics"))
+    .settings(kindProjectorSettings *)
+    .settings(Test / tpolecatExcludeOptions := Set(ScalacOptions.lintInferAny))
+    .settings(
+      name := "zio-telemetry-extras-sttp4-metrics",
+      libraryDependencies ++= Dependencies.sttp4 ++ Dependencies.zio
+    )
+
 lazy val `natchez-bridge` =
   project
     .in(file("natchez-bridge"))
@@ -138,7 +148,8 @@ lazy val root = project
     `natchez-bridge`,
     propagators,
     `smithy4s-series-18`,
-    `smithy4s-series-19`
+    `smithy4s-series-19`,
+    `sttp4-metrics`
   )
 
 addCommandAlias("lint", "; scalafmtAll; scalafixAll")

@@ -6,18 +6,20 @@ object Dependencies {
     val natchez       = "org.tpolecat"
     val openTelemetry = "io.opentelemetry"
     val smithy4s      = "com.disneystreaming.smithy4s"
+    val sttp4         = "com.softwaremill.sttp.client4"
     val zio           = "dev.zio"
   }
 
   private object version {
-    val http4s        = "0.23.36"
+    val http4s        = "0.23.38"
     val natchez       = "0.3.10"
-    val openTelemetry = "1.64.0"
+    val openTelemetry = "1.67.0"
     val smithy4s18    = "0.18.55"
-    val smithy4s19    = "0.19.11"
-    val zio           = "2.1.26"
-    val zioInterop    = "23.1.0.13"
-    val zioTelemetry  = "3.1.18"
+    val smithy4s19    = "0.19.13"
+    val sttp4         = "4.1.0"
+    val zio           = "2.1.27"
+    val zioInterop    = "23.1.0.14"
+    val zioTelemetry  = "3.1.21"
   }
 
   object http4s {
@@ -44,6 +46,8 @@ object Dependencies {
     val `0.18.x` = Seq(org.smithy4s %% "smithy4s-http4s" % version.smithy4s18)
     val `0.19.x` = Seq(org.smithy4s %% "smithy4s-http4s" % version.smithy4s19)
   }
+
+  val sttp4 = Seq(org.sttp4 %% "zio" % version.sttp4)
 
   val openTelemetry = Seq(
     org.openTelemetry % "opentelemetry-sdk-testing" % version.openTelemetry % Test
